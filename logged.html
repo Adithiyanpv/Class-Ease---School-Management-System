@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,7 +48,7 @@
 
         .brand {
             color: #f4c10f;
-            font-size: 2.5em;
+            font-size: 2em;
             font-weight: 700;
             font-family: 'Playfair Display', serif;
             text-decoration: none;
@@ -62,7 +63,8 @@
         .navbar-links a {
             color: #ffffff;
             text-decoration: none;
-            padding: 14px 20px;
+            padding: 10px 16px;
+            font-size: 0.9em;
             font-weight: 600;
             position: relative;
             transition: color 0.3s ease;
@@ -89,15 +91,15 @@
         }
 
         .welcome-section h1 {
-            font-size: 3.5em;
+            font-size: 2.5em;
             color: #f4c10f;
             font-family: 'Playfair Display', serif;
             margin-bottom: 10px;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
-
+        
         .welcome-section p {
-            font-size: 1.4em;
+            font-size: 1.2em;
             color: #bbb;
             margin-bottom: 40px;
         }
@@ -116,9 +118,9 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
             border-radius: 20px;
-            padding: 40px;
+            padding: 30px;
             text-align: center;
-            width: 300px;
+            width: 250px;
             box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
@@ -130,21 +132,21 @@
         }
 
         .card i {
-            font-size: 4em;
+            font-size: 2.5em;
             color: #f4c10f;
             margin-bottom: 15px;
             animation: pulseIcon 1.5s infinite ease-in-out;
         }
 
         .card h2 {
-            font-size: 2.5em;
+            font-size: 1.8em;
             margin-bottom: 15px;
             color: #ffffff;
             font-family: 'Playfair Display', serif;
         }
 
         .card p {
-            font-size: 1.2em;
+            font-size: 1em;
             color: #ccc;
             margin-bottom: 15px;
         }
@@ -161,21 +163,21 @@
             text-decoration: underline;
             text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
         }
+
         .download-btn {
-    font-size: 1.2em; /* Increase the font size here */
-    padding: 8px 16px; /* Optional: adjust padding to keep it proportional */
-    display: inline-flex; /* Align icon and text */
-    align-items: center; /* Center icon and text vertically */
-    text-decoration: none;
-    color: #f4c10f; /* Button text color */
-    transition: background 0.3s ease, color 0.3s ease;
-}
+            font-size: 1em;
+            padding: 8px 14px;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: #f4c10f;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
 
-.download-btn:hover {
-    background: rgba(255, 255, 255, 0.2); /* Add hover effect */
-    color: #ffffff; /* Change text color on hover */
-}
-
+        .download-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
 
         /* Keyframe for Icon Animation */
         @keyframes pulseIcon {
@@ -200,7 +202,7 @@
             }
 
             .brand {
-                font-size: 2em;
+                font-size: 1.5em;
             }
 
             .cards {
@@ -213,11 +215,11 @@
             }
 
             .welcome-section h1 {
-                font-size: 2.5em;
+                font-size: 2em;
             }
 
             .welcome-section p {
-                font-size: 1.2em;
+                font-size: 1.1em;
             }
         }
 
@@ -227,15 +229,16 @@
             }
 
             .card h2 {
-                font-size: 2em;
+                font-size: 1.5em;
             }
 
             .card p {
-                font-size: 1em;
+                font-size: 0.9em;
             }
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="navbar-container">
@@ -261,23 +264,26 @@
                     <i class="fas fa-calendar-alt"></i>
                     <h2>Schedule</h2>
                     <p>Check your schedule and dates.</p>
-<div class="download-section">
-    <h2>Download Your Resources</h2>
-    <a href="/download-academic-calendar" class="download-btn" target="_blank">
-        <i class="fas fa-download"></i> Academic Calendar
-    </a>
-    <a href="/download-daily-timetable" class="download-btn" target="_blank">
-        <i class="fas fa-download"></i> Daily Timetable
-    </a>
-</div>
-
-
+                    <div class="download-section">
+                        <h3>Download Your Resources</h3>
+                        <a href="/download-academic-calendar" class="download-btn" target="_blank">
+                            <i class="fas fa-download" style="margin-right: 5px;"></i> Academic Calendar                        </a>
+                        <a href="/download-daily-timetable" class="download-btn" target="_blank">
+                            <i class="fas fa-download" style="margin-right: 5px;"></i> Daily Timetable
+                        </a>
+                    </div>
                 </div>
                 <div class="card">
                     <i class="fas fa-users"></i>
                     <h2>Attendance</h2>
                     <p>Check your attendance percentage.</p>
                     <a href="/view-attendance">View Attendance</a>
+                </div>
+                <div class="card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h2>View Grades</h2>
+                    <p>Check your grades and performance.</p>
+                    <a href="/view-grades">View Grades</a>
                 </div>
             </div>
         </div>
@@ -289,12 +295,11 @@
                 .then(data => {
                     if (data.name) {
                         document.getElementById('welcome-message').textContent = `Welcome, ${data.name}`;
-                    } else {
-                        document.getElementById('welcome-message').textContent = 'Welcome!';
                     }
                 })
-                .catch(error => console.error('Error fetching the username:', error));
+                .catch(error => console.error('Error fetching user data:', error));
         });
     </script>
 </body>
+
 </html>

@@ -12,14 +12,14 @@
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #f093fb, #f5576c);
+            background: linear-gradient(135deg, #1c1c2b, #232536);
             color: #333;
         }
 
         /* Header styles */
         header {
-            background-color: #008080;
-            color: #fff;
+            background-color: #f4c10f;
+            color: black;
             padding: 20px 0;
             text-align: center;
             position: sticky;
@@ -76,8 +76,8 @@
             display: block;
             margin: 20px auto;
             padding: 10px 20px;
-            background-color: #008080;
-            color: white;
+            background-color: #f4c10f;
+            color: black;
             border: none;
             border-radius: 20px;
             cursor: pointer;
@@ -85,7 +85,16 @@
         }
 
         .back-button:hover {
-            background-color: #006666;
+            background-color: #a99859;
+        }
+
+        /* Percentage display styles */
+        .percentage-display {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f4c10f;
+            margin: 20px 0;
         }
 
         /* Responsive design */
@@ -127,7 +136,17 @@
                 font-weight: bold;
             }
         }
+
+        /* Align the canvas for the pie chart */
+        canvas {
+            display: block;
+            margin: 20px auto; /* Centers the canvas */
+            max-width: 400px;  /* Limits the maximum width */
+            width: 100%;       /* Allows responsive resizing */
+            height: auto;      /* Maintains aspect ratio */
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
@@ -145,6 +164,13 @@
                 <!-- Attendance records will be inserted here -->
             </tbody>
         </table>
+        
+        <!-- Display attendance percentage -->
+        <div class="percentage-display" id="attendance-percentage">
+            Attendance Percentage: <span id="percentage-value">0%</span>
+        </div>
+
+        <canvas id="attendanceChart" width="400" height="400"></canvas>
         <button onclick="window.location.href='/logged'" class="back-button">Back</button>
     </main>
     <script>
@@ -153,6 +179,9 @@
                 .then(response => response.json())
                 .then(data => {
                     const attendanceList = document.getElementById('attendance-list');
+                    let presentCount = 0;
+                    let absentCount = 0;
+
                     data.attendance.forEach(record => {
                         const row = document.createElement('tr');
 
@@ -171,10 +200,68 @@
                             <td>${record.status_text}</td>
                         `;
                         attendanceList.appendChild(row);
+
+                        // Count present and absent statuses
+                        if (record.status_text.toLowerCase() === 'present') {
+                            presentCount++;
+                        } else if (record.status_text.toLowerCase() === 'absent') {
+                            absentCount++;
+                        }
                     });
+
+                    // Calculate and display the attendance percentage
+                    const totalCount = presentCount + absentCount;
+                    const attendancePercentage = totalCount > 0 ? Math.round((presentCount / totalCount) * 100) : 0;
+                    document.getElementById('percentage-value').textContent = attendancePercentage + '%';
+
+                    // Render the pie chart
+                    renderPieChart(presentCount, absentCount);
                 })
                 .catch(error => console.error('Error fetching attendance:', error));
         });
+
+        function renderPieChart(present, absent) {
+            const ctx = document.getElementById('attendanceChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Present', 'Absent'],
+                    datasets: [{
+                        label: 'Attendance',
+                        data: [present, absent],
+                        backgroundColor: [
+                            'rgba(76, 175, 80, 0.6)', // Green for Present
+                            'rgba(244, 67, 54, 0.6)'  // Red for Absent
+                        ],
+                        borderColor: [
+                            'rgba(76, 175, 80, 1)',
+                            'rgba(244, 67, 54, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    const dataset = tooltipItem.chart.data.datasets[tooltipItem.datasetIndex];
+                                    const currentValue = dataset.data[tooltipItem.dataIndex];
+                                    const total = dataset.data.reduce((acc, value) => acc + value, 0);
+                                    const percentage = Math.floor(((currentValue / total) * 100) + 0.5);         
+                                    return `${tooltipItem.label}: ${currentValue} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>

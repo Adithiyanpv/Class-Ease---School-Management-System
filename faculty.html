@@ -14,6 +14,10 @@
             padding: 0;
             box-sizing: border-box;
         }
+        .fas fa-calendar-alt{
+            height: 0%;
+            width: 0%;
+        }
 
         body {
             font-family: 'Nunito', sans-serif;
@@ -48,7 +52,7 @@
 
         .brand {
             color: #f4c10f;
-            font-size: 2.5em;
+            font-size: 2em;
             font-weight: 700;
             font-family: 'Playfair Display', serif;
             text-decoration: none;
@@ -63,7 +67,8 @@
         .navbar-links a {
             color: #ffffff;
             text-decoration: none;
-            padding: 14px 20px;
+            padding: 10px 16px; /* Decreased padding */
+            font-size: 0.9em; /* Decreased font size */
             font-weight: 600;
             position: relative;
             transition: color 0.3s ease;
@@ -90,7 +95,7 @@
         }
 
         .welcome-section h1 {
-            font-size: 3.5em;
+            font-size: 2.5em;
             color: #f4c10f;
             font-family: 'Playfair Display', serif;
             margin-bottom: 10px;
@@ -98,7 +103,7 @@
         }
 
         .welcome-section p {
-            font-size: 1.4em;
+            font-size: 1.2em;
             color: #bbb;
             margin-bottom: 40px;
         }
@@ -117,9 +122,9 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
             border-radius: 20px;
-            padding: 40px;
+            padding: 30px;
             text-align: center;
-            width: 300px;
+            width: 250px;
             box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
@@ -131,21 +136,21 @@
         }
 
         .card i {
-            font-size: 4em;
+            font-size: 2.5em;
             color: #f4c10f;
             margin-bottom: 15px;
             animation: pulseIcon 1.5s infinite ease-in-out;
         }
 
         .card h2 {
-            font-size: 2.5em;
+            font-size: 1.8em;
             margin-bottom: 15px;
             color: #ffffff;
             font-family: 'Playfair Display', serif;
         }
 
         .card p {
-            font-size: 1.2em;
+            font-size: 1em;
             color: #ccc;
             margin-bottom: 15px;
         }
@@ -242,13 +247,19 @@
                 <i class="fas fa-calendar-alt"></i>
                 <h2>Upload Attendance</h2>
                 <p>Manage and upload attendance for your classes.</p>
-                <a href="/upload-attendance">Upload Attendance</a>
+                <a href="/manage-attendance">Upload Attendance</a>
             </div>
             <div class="card">
                 <i class="fas fa-check-circle"></i>
                 <h2>Endorse OD Requests</h2>
                 <p>Review and endorse On-Duty leave requests.</p>
-                <a href="/endorse-od">Endorse OD</a>
+                <a href="/faculty_od_requests">Endorse OD</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-file-upload"></i>
+                <h2>Upload Grades</h2>
+                <p>Manage and upload grades for your students.</p>
+                <a href="/upload-grades">Upload Grades</a>
             </div>
         </div>
     </main>

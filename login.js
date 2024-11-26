@@ -23,7 +23,7 @@ app.use(session({
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'Thiyan@12345',
+    password: '1231',
     database: 'nodejs'
 });
 
@@ -407,10 +407,10 @@ app.post('/create-user', (req, res) => {
 
 // Delete User Route
 app.post('/deactivate-user', (req, res) => {
-    const { role, username, password } = req.body;
+    const { role, username } = req.body;
 
     // Ensure required fields are provided
-    if (!role || !username || !password) {
+    if (!role || !username ) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -426,18 +426,29 @@ app.post('/deactivate-user', (req, res) => {
             return res.status(400).json({ error: 'User not found' });
         }
 
-        // Delete the user from the database
+        // Delete the user from the attendance table first, then from the users table
+        const deleteAttendanceQuery = 'DELETE FROM attendance WHERE student_username = ?';
         const deleteUserQuery = 'DELETE FROM users WHERE username = ? AND role = ?';
-        connection.query(deleteUserQuery, [username, role], (err, results) => {
+        
+        // Delete from attendance table
+        connection.query(deleteAttendanceQuery, [username], (err, result) => {
             if (err) {
-                console.error('Error deleting user:', err);
-                return res.status(500).json({ error: 'Error deleting user' });
+                console.error('Error deleting from attendance:', err);
+                return res.status(500).json({ error: 'Error deleting user from attendance' });
             }
-            res.json({ message: 'User deleted successfully' });
+
+            // Delete from users table
+            connection.query(deleteUserQuery, [username, role], (err, result) => {
+                if (err) {
+                    console.error('Error deleting user:', err);
+                    return res.status(500).json({ error: 'Error deleting user' });
+                } else {
+                    return res.json({ message: 'User deleted successfully' });
+                }
+            });
         });
     });
 });
-
 app.get('/download-daily-timetable', (req, res) => {
     const studentUsername = req.session.username; // Assume the username is passed as a query parameter
 
@@ -507,7 +518,112 @@ app.get('/download-academic-calendar', (req, res) => {
         });
     });
 
+
+
+// MySQL connection setup
+
+
+// Serve the upload grades page
+app.get('/upload-grades', (req, res) => {
+    if (req.session.username && req.session.role === 'faculty') {
+        res.sendFile(path.join(__dirname, 'upload_grades.html'));
+    } else {
+        res.redirect('/');
+    }
+});
+
+// Handle grades upload
+app.post('/upload-grades', (req, res) => {
+    const { exam, grades } = req.body; // grades is an array of student records
+
+    // Prepare the query for inserting or updating grades
+    const insertQuery = `
+        INSERT INTO grades2 
+        (student_username, exam, tamil_grade, tamil_marks, 
+        english_grade, english_marks, maths_grade, maths_marks, 
+        science_grade, science_marks, social_grade, social_marks)
+        VALUES ?
+        ON DUPLICATE KEY UPDATE 
+        tamil_grade = VALUES(tamil_grade), tamil_marks = VALUES(tamil_marks), 
+        english_grade = VALUES(english_grade), english_marks = VALUES(english_marks), 
+        maths_grade = VALUES(maths_grade), maths_marks = VALUES(maths_marks), 
+        science_grade = VALUES(science_grade), science_marks = VALUES(science_marks), 
+        social_grade = VALUES(social_grade), social_marks = VALUES(social_marks)
+    `;
+
+    // Map the grades data to the required format
+    const values = grades.map(g => [
+        g.student_username, exam, g.tamil_grade, g.tamil_marks,
+        g.english_grade, g.english_marks, g.maths_grade, g.maths_marks,
+        g.science_grade, g.science_marks, g.social_grade, g.social_marks
+    ]);
+
+    connection.query(insertQuery, [values], (err, results) => {
+        if (err) {
+            console.error('Error recording grades:', err);
+            return res.status(500).json({ error: 'Error recording grades' });
+        }
+        res.json({ message: 'Grades recorded successfully' });
+    });
+});
+
+// Other routes and middleware...
+
+app.get('/view-grades', (req, res) => {
+    if (req.session.username && req.session.role === 'student') {
+        res.sendFile(path.join(__dirname, 'view_grades.html'));
+    } else {
+        res.redirect('/');
+    }
+});
+
+app.get('/get-grades', (req, res) => {
+    const { exam } = req.query; // Get exam from query parameters
+    const studentUsername = req.session.username; // Get the logged-in student's username
+
+    // Check if exam is selected
+    if (!exam) {
+        return res.status(400).json({ error: 'Exam is required' });
+    }
+
+    const query = `
+        SELECT 
+            g.tamil_grade,
+            g.tamil_marks,
+            g.english_grade,
+            g.english_marks,
+            g.maths_grade,
+            g.maths_marks,
+            g.science_grade,
+            g.science_marks,
+            g.social_grade,
+            g.social_marks
+        FROM 
+            grades2 g
+        WHERE 
+            g.student_username = ? AND g.exam = ?
+    `;
+
+    connection.query(query, [studentUsername, exam], (err, results) => {
+        if (err) {
+            console.error('Error fetching grades:', err);
+            return res.status(500).json({ error: 'Error fetching grades' });
+        }
+        
+        // If no results, return an empty grades array
+        if (results.length === 0) {
+            return res.json({ grades: [] }); // Return an empty array if no grades found
+        }
+
+        // Return the grades for the student
+        res.json({ grades: results });
+    });
+});
+
+
 // Start the server
 app.listen(4500, () => {
     console.log('Server running on http://localhost:4500');
 });
+
+

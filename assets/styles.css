@@ -9,6 +9,7 @@ body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #1c1c2b, #232536); /* Dark gradient background */
     color: #ffffff;
+    overflow: hidden; /* Prevent scrollbar from showing during the trail effect */
 }
 
 /* Container and Layout */
@@ -74,6 +75,11 @@ body {
 .login-form input::placeholder {
     color: #ccc;
 }
+.login-form select option {
+    background-color: #232536; /* Dark background for dropdown options */
+    color: #ffffff; /* White text */
+}
+
 
 /* Focus and Hover States */
 .login-form select:focus,
@@ -129,41 +135,27 @@ body {
     border-color: #f4c10f; /* Accent color */
     box-shadow: 0 0 5px rgba(244, 193, 15, 0.5); /* Accent glow */
     outline: none;
-    background-color: rgba(255, 255, 255, 0.2); /* Slightly lighter background on focus */
-}
-.login-form select option {
-    background-color: #232536; /* Dark background for dropdown options */
-    color: #ffffff; /* White text */
 }
 
-
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    .login-container {
-        padding: 30px;
-    }
-
-    .login-form h2 {
-        font-size: 1.8em;
-    }
+/* Cursor Trail Effect */
+.trail {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: rgba(244, 193, 15, 0.8); /* Gold color for trail */
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 10px rgba(244, 193, 15, 0.5), 0 0 20px rgba(244, 193, 15, 0.3);
+    animation: fade-out 0.8s forwards; /* Smooth fade-out */
 }
 
-@media (max-width: 480px) {
-    .login-container {
-        padding: 20px;
+@keyframes fade-out {
+    0% {
+        transform: scale(1);
+        opacity: 1;
     }
-
-    .login-form h2 {
-        font-size: 1.5em;
-    }
-
-    .login-form select,
-    .login-form input {
-        font-size: 14px;
-    }
-
-    .btn {
-        font-size: 14px;
-        padding: 10px;
+    100% {
+        transform: scale(0.5);
+        opacity: 0;
     }
 }

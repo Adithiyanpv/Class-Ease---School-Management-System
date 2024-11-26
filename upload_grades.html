@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Grades</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles */
+        label {
+            color: white;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #161722;
+            color: #333;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Container styles */
+        .container {
+            margin: 80px auto;
+            max-width: 800px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: #f4c10f;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #f4c10f;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 8px;
+            color: white;
+        }
+
+        th {
+            background-color: #f4c10f;
+            color: black;
+        }
+
+        /* Button styles */
+        .button-container {
+            text-align: center;
+        }
+
+        button {
+            background-color: #f4c10f;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #aa9a10;
+        }
+
+        .back-button {
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+            background-color: transparent;
+            border: none;
+            color: #f4c10f;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        input[type="text"], select {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .success-message {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .success-message i {
+            color: #28a745;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Manage Grades</h2>
+        <label for="exam" required>Select Exam:</label>
+        <select id="exam">
+            <option value="" disabled selected>Select Exam</option>
+            <option value="mid1">I Mid Term</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="mid2">II Mid Term</option>
+            <option value="halfyearly">Half Yearly</option>
+            <option value="mid3">III Mid Term</option>
+            <option value="annual">Annual</option>
+        </select>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Tamil Grade</th>
+                    <th>Tamil Marks</th>
+                    <th>English Grade</th>
+                    <th>English Marks</th>
+                    <th>Maths Grade</th>
+                    <th>Maths Marks</th>
+                    <th>Science Grade</th>
+                    <th>Science Marks</th>
+                    <th>Social Grade</th>
+                    <th>Social Marks</th>
+                </tr>
+            </thead>
+            <tbody id="students-list">
+                <!-- Student rows will be dynamically inserted here -->
+            </tbody>
+        </table>
+        <div class="button-container">
+            <button onclick="submitGrades()">Submit Grades</button>
+        </div>
+        <button onclick="window.location.href='/faculty'" class="back-button">Back</button>
+        <div id="success-message" class="success-message">
+            <i class="fas fa-check-circle"></i> Grades submitted successfully!
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/get-classes')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.classes.length > 0) {
+                        const className = data.classes[0].class_name; // Assuming only one class per faculty
+                        fetch(`/get-students?class_name=${className}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const studentsList = document.getElementById('students-list');
+                                data.students.forEach(student => {
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                                        <td>${student.student_name}</td>
+                                        <td><input type="text" class="tamil-grade" data-username="${student.student_username}" placeholder="Enter Tamil grade"></td>
+                                        <td><input type="text" class="tamil-marks" data-username="${student.student_username}" placeholder="Enter Tamil marks"></td>
+                                        <td><input type="text" class="english-grade" data-username="${student.student_username}" placeholder="Enter English grade"></td>
+                                        <td><input type="text" class="english-marks" data-username="${student.student_username}" placeholder="Enter English marks"></td>
+                                        <td><input type="text" class="maths-grade" data-username="${student.student_username}" placeholder="Enter Maths grade"></td>
+                                        <td><input type="text" class="maths-marks" data-username="${student.student_username}" placeholder="Enter Maths marks"></td>
+                                        <td><input type="text" class="science-grade" data-username="${student.student_username}" placeholder="Enter Science grade"></td>
+                                        <td><input type="text" class="science-marks" data-username="${student.student_username}" placeholder="Enter Science marks"></td>
+                                        <td><input type="text" class="social-grade" data-username="${student.student_username}" placeholder="Enter Social grade"></td>
+                                        <td><input type="text" class="social-marks" data-username="${student.student_username}" placeholder="Enter Social marks"></td>
+                                    `;
+                                    studentsList.appendChild(row);
+                                });
+                            });
+                    }
+                });
+        });
+
+        function submitGrades() {
+    const exam = document.getElementById('exam').value;
+
+    // Check if an exam is selected
+    if (!exam) {
+        alert('Please select an exam before submitting grades.');
+        return; // Stop the function if no exam is selected
+    }
+
+    const grades = [];
+
+    const rows = document.querySelectorAll('#students-list tr');
+    rows.forEach(row => {
+        const studentUsername = row.querySelector('.tamil-grade').getAttribute('data-username');
+        
+        // Get values for all subjects
+        const tamilGrade = row.querySelector('.tamil-grade').value;
+        const tamilMarks = row.querySelector('.tamil-marks').value;
+        const englishGrade = row.querySelector('.english-grade').value;
+        const englishMarks = row.querySelector('.english-marks').value;
+        const mathsGrade = row.querySelector('.maths-grade').value;
+        const mathsMarks = row.querySelector('.maths-marks').value;
+        const scienceGrade = row.querySelector('.science-grade').value;
+        const scienceMarks = row.querySelector('.science-marks').value;
+        const socialGrade = row.querySelector('.social-grade').value;
+        const socialMarks = row.querySelector('.social-marks').value;
+
+        grades.push({
+            student_username: studentUsername,
+            tamil_grade: tamilGrade,
+            tamil_marks: tamilMarks,
+            english_grade: englishGrade,
+            english_marks: englishMarks,
+            maths_grade: mathsGrade,
+            maths_marks: mathsMarks,
+            science_grade: scienceGrade,
+            science_marks: scienceMarks,
+            social_grade: socialGrade,
+            social_marks: socialMarks
+        });
+    });
+
+    fetch('/upload-grades', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ exam, grades })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const successMessage = document.getElementById('success-message');
+        successMessage.style.display = 'block';
+        setTimeout(() => {
+            successMessage.style.display = 'none';
+        }, 3000); // Hide after 3 seconds
+    })
+    .catch(error => console.error('Error recording grades:', error));
+}
+
+    </script>
+</body>
+</html>
